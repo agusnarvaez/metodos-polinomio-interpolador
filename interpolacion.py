@@ -2,6 +2,7 @@ import numpy as np
 import warnings
 import matplotlib.pyplot as plt
 from tabulate import tabulate
+import copy
 
 # Ignorar advertencias de numpy
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -35,9 +36,20 @@ def ordenar_pares(pares):
     :param pares:
     :return:
     """
+    paresOrdenados = copy.copy(pares)
     # Ordenar primero por X y después por Y
-    pares.sort(key=lambda x: (x[0], x[1]))
-    return pares
+    paresOrdenados.sort(key=lambda x: (x[0], x[1]))
+    return paresOrdenados
+
+def invertir_pares(pares):
+    """
+    Ordena los pares de mayor a menor por la coordenada x y en caso de empate por la coordenada y.
+    :param pares: Lista de pares de coordenadas (x, y).
+    :return: Lista ordenada de pares de coordenadas.
+    """
+    paresInvertidos = copy.copy(pares)
+    paresInvertidos.sort(key=lambda x: (-x[0], x[1]))
+    return paresInvertidos
 
 
 def calcular_diferencias_divididas(x, y):
@@ -51,7 +63,6 @@ def calcular_diferencias_divididas(x, y):
     diferencias = [y[0]]
     for j in range(1, n):
         diferencias.append((y[j] - y[j - 1]) / (x[j] - x[j - 1]))
-        print(y[j] - y[j - 1], "/", x[j] - x[j - 1])
 
         for i in range(j - 1, 0, -1):
             diferencias[i] = (diferencias[i] - diferencias[i - 1]) / (x[j] - x[j - 1])
@@ -139,14 +150,42 @@ def main():
     print("Integrantes:")
     print("    - Venturini, Tomás")
     print("    - Narvaez, Agustín")
-    pares = ordenar_pares(generar_pares_aleatorios())
-    print(tabulate(pares, headers=["x", "y"], tablefmt="fancy_grid"))  # Imprimir pares en forma de tabla
-    polinomio = calcular_polinomio_interpolador(pares)
+    #* Genero números aleatorios
+    paresDesordenados = generar_pares_aleatorios()
+
+    #* Ordeno los pares y los muestro
+    paresOrdenados = ordenar_pares(paresDesordenados)
+    print(tabulate(paresOrdenados, headers=["x", "y"], tablefmt="fancy_grid"))  # Imprimir pares en forma de tabla
+
+    #* Calculo el polinomio, muestro su grado y lo grafico
+    polinomio = calcular_polinomio_interpolador(paresOrdenados)
+
     print("Grado Polinomio:")
     print(obtener_grado_polinomio(polinomio))
     print("Polinomio Interpolador:")
     print(polinomio)
-    graficar_polinomio_interpolador(polinomio, pares)
+    graficar_polinomio_interpolador(polinomio, paresOrdenados)
+
+    #* Invierto los pares y los muestro
+    paresInvertidos = invertir_pares(paresOrdenados)
+    print(tabulate(paresInvertidos, headers=["x", "y"], tablefmt="fancy_grid"))
+
+    #* Calculo el polinomio, muestro su grado y lo grafico
+    polinomioInvertido = calcular_polinomio_interpolador(paresInvertidos)
+    print("Grado Polinomio:")
+    print(obtener_grado_polinomio(polinomioInvertido))
+    print("Polinomio Interpolador:")
+    print(polinomioInvertido)
+    graficar_polinomio_interpolador(polinomioInvertido, paresInvertidos)
+
+    #* Calculo el polinomio con pares desordenados, muestro su grado y lo grafico
+    print(tabulate(paresDesordenados, headers=["x", "y"], tablefmt="fancy_grid"))
+    polinomioDesordenado = calcular_polinomio_interpolador(paresDesordenados)
+    print("Grado Polinomio:")
+    print(obtener_grado_polinomio(polinomioDesordenado))
+    print("Polinomio Interpolador:")
+    print(polinomioDesordenado)
+    graficar_polinomio_interpolador(polinomioDesordenado, paresDesordenados)
 
 
 if __name__ == "__main__":

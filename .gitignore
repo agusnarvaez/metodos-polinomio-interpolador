@@ -241,3 +241,5 @@ cython_debug/
 
 /.idea/.gitignore
 /.idea/misc.xml
+/ecuacion_polinomio.jpg
+/polinomio_interpolador.jpg

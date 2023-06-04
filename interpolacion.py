@@ -1,5 +1,7 @@
 import numpy as np
 import warnings
+import matplotlib.pyplot as plt
+from tabulate import tabulate
 
 # Ignorar advertencias de numpy
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -49,7 +51,7 @@ def calcular_diferencias_divididas(x, y):
     diferencias = [y[0]]
     for j in range(1, n):
         diferencias.append((y[j] - y[j - 1]) / (x[j] - x[j - 1]))
-        print(y[j]-y[j-1], "/", x[j]-x[j-1])
+        print(y[j] - y[j - 1], "/", x[j] - x[j - 1])
 
         for i in range(j - 1, 0, -1):
             diferencias[i] = (diferencias[i] - diferencias[i - 1]) / (x[j] - x[j - 1])
@@ -89,6 +91,37 @@ def calcular_polinomio_interpolador(puntos):
     return polinomio
 
 
+def graficar_polinomio_interpolador(polinomio, puntos):
+    """
+    Grafica el polinomio interpolador junto con los puntos de datos.
+    :param polinomio:
+    :param puntos:
+    """
+    x = np.array([p[0] for p in puntos])
+    y = np.array([p[1] for p in puntos])
+
+    # Obtener valores únicos de x y encontrar límites mínimo y máximo
+    unique_x = np.unique(x)
+    x_min, x_max = np.min(unique_x), np.max(unique_x)
+    unique_y = np.unique(y)
+    y_min, y_max = np.min(unique_y), np.max(unique_y)
+
+    # Generar puntos para graficar el polinomio
+    x_grafico = np.linspace(x_min, x_max, 100)
+    y_grafico = np.linspace(y_min, y_max, 100)
+    eval_polinomio = np.vectorize(lambda x: eval(polinomio))
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(x_grafico, y_grafico, label='Polinomio Interpolador')
+    plt.scatter(x, y, color='red', label='Puntos de Datos')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Polinomio Interpolador')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+
 def main():
     """
     Función principal.
@@ -99,8 +132,11 @@ def main():
     print("    - Venturini, Tomás")
     print("    - Narvaez, Agustín")
     pares = ordenar_pares(generar_pares_aleatorios())
-    print(pares)
-    print(calcular_polinomio_interpolador(pares))
+    print(tabulate(pares, headers=["x", "y"], tablefmt="fancy_grid"))  # Imprimir pares en forma de tabla
+    polinomio = calcular_polinomio_interpolador(pares)
+    print("Polinomio Interpolador:")
+    print(polinomio)
+    graficar_polinomio_interpolador(polinomio, pares)
 
 
 if __name__ == "__main__":

@@ -90,6 +90,14 @@ def calcular_polinomio_interpolador(puntos):
             polinomio += f" * (x - {x[j]})"
     return polinomio
 
+def obtener_grado_polinomio(polinomio):
+    terminos = polinomio.split('+')
+    grado = 0
+    for termino in terminos:
+        coeficiente = termino.strip().split('*')[0]
+        if coeficiente != '':
+            grado += 1
+    return grado
 
 def graficar_polinomio_interpolador(polinomio, puntos):
     """
@@ -134,6 +142,8 @@ def main():
     pares = ordenar_pares(generar_pares_aleatorios())
     print(tabulate(pares, headers=["x", "y"], tablefmt="fancy_grid"))  # Imprimir pares en forma de tabla
     polinomio = calcular_polinomio_interpolador(pares)
+    print("Grado Polinomio:")
+    print(obtener_grado_polinomio(polinomio))
     print("Polinomio Interpolador:")
     print(polinomio)
     graficar_polinomio_interpolador(polinomio, pares)

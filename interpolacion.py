@@ -1,6 +1,10 @@
 import numpy as np
 import warnings
+import math
 import matplotlib.pyplot as plt
+import sympy as sp
+from sympy import simplify, symbols, degree, degree_list
+from decimal import Decimal, ROUND_DOWN
 from tabulate import tabulate
 import copy
 
@@ -40,6 +44,7 @@ def ordenar_pares(pares):
     # Ordenar primero por X y después por Y
     paresOrdenados.sort(key=lambda x: (x[0], x[1]))
     return paresOrdenados
+
 
 def invertir_pares(pares):
     """
@@ -99,23 +104,23 @@ def calcular_polinomio_interpolador(puntos):
         polinomio += f" + {coeficientes[i]:.6f}"
         for j in range(i):
             polinomio += f" * (x - {x[j]})"
-    return polinomio
+    return simplify(polinomio)
+
 
 def obtener_grado_polinomio(polinomio):
-    terminos = polinomio.split('+')
-    grado = 0
-    for termino in terminos:
-        coeficiente = termino.strip().split('*')[0]
-        if coeficiente != '':
-            grado += 1
+    grado = degree(polinomio)
     return grado
 
-def graficar_polinomio_interpolador(polinomio, puntos):
+
+def graficar_polinomios_interpoladores(polinomio, puntos):
     """
     Grafica el polinomio interpolador junto con los puntos de datos.
     :param polinomio:
     :param puntos:
     """
+    import numpy as np
+    import matplotlib.pyplot as plt
+
     x = np.array([p[0] for p in puntos])
     y = np.array([p[1] for p in puntos])
 
@@ -127,8 +132,8 @@ def graficar_polinomio_interpolador(polinomio, puntos):
 
     # Generar puntos para graficar el polinomio
     x_grafico = np.linspace(x_min, x_max, 100)
-    y_grafico = np.linspace(y_min, y_max, 100)
-    eval_polinomio = np.vectorize(lambda x: eval(polinomio))
+    eval_polinomio = sp.lambdify(sp.symbols('x'), polinomio)
+    y_grafico = eval_polinomio(x_grafico)
 
     plt.figure(figsize=(8, 6))
     plt.plot(x_grafico, y_grafico, label='Polinomio Interpolador')
@@ -141,6 +146,14 @@ def graficar_polinomio_interpolador(polinomio, puntos):
     plt.show()
 
 
+def formateo_impresion(polinomio, pares):
+    print(tabulate(pares, headers=["x", "y"], tablefmt="fancy_grid"))  # Imprimir pares en forma de tabla
+    print("Grado Polinomio:")
+    print(obtener_grado_polinomio(polinomio))
+    print("Polinomio Interpolador:")
+    print(polinomio)
+
+
 def main():
     """
     Función principal.
@@ -150,42 +163,24 @@ def main():
     print("Integrantes:")
     print("    - Venturini, Tomás")
     print("    - Narvaez, Agustín")
-    #* Genero números aleatorios
-    paresDesordenados = generar_pares_aleatorios()
+    # * Genero números aleatorios
+    pares_desordenados = generar_pares_aleatorios()
 
-    #* Ordeno los pares y los muestro
-    paresOrdenados = ordenar_pares(paresDesordenados)
-    print(tabulate(paresOrdenados, headers=["x", "y"], tablefmt="fancy_grid"))  # Imprimir pares en forma de tabla
+    # * Ordeno los pares y los muestro, calculo el polinomio y lo muestro
+    pares_ordenados = ordenar_pares(pares_desordenados)
+    polinomio = calcular_polinomio_interpolador(pares_ordenados)
+    formateo_impresion(polinomio, pares_ordenados)
 
-    #* Calculo el polinomio, muestro su grado y lo grafico
-    polinomio = calcular_polinomio_interpolador(paresOrdenados)
+    # * Invierto los pares y los muestro, calculo el polinomio y lo muestro
+    pares_invertidos = invertir_pares(pares_ordenados)
+    polinomio_invertido = calcular_polinomio_interpolador(pares_invertidos)
+    formateo_impresion(polinomio_invertido, pares_invertidos)
 
-    print("Grado Polinomio:")
-    print(obtener_grado_polinomio(polinomio))
-    print("Polinomio Interpolador:")
-    print(polinomio)
-    graficar_polinomio_interpolador(polinomio, paresOrdenados)
+    # * Calculo el polinomio con pares desordenados, muestro su grado y lo grafico
+    polinomio_desordenado = calcular_polinomio_interpolador(pares_desordenados)
+    formateo_impresion(polinomio_desordenado, pares_desordenados)
 
-    #* Invierto los pares y los muestro
-    paresInvertidos = invertir_pares(paresOrdenados)
-    print(tabulate(paresInvertidos, headers=["x", "y"], tablefmt="fancy_grid"))
-
-    #* Calculo el polinomio, muestro su grado y lo grafico
-    polinomioInvertido = calcular_polinomio_interpolador(paresInvertidos)
-    print("Grado Polinomio:")
-    print(obtener_grado_polinomio(polinomioInvertido))
-    print("Polinomio Interpolador:")
-    print(polinomioInvertido)
-    graficar_polinomio_interpolador(polinomioInvertido, paresInvertidos)
-
-    #* Calculo el polinomio con pares desordenados, muestro su grado y lo grafico
-    print(tabulate(paresDesordenados, headers=["x", "y"], tablefmt="fancy_grid"))
-    polinomioDesordenado = calcular_polinomio_interpolador(paresDesordenados)
-    print("Grado Polinomio:")
-    print(obtener_grado_polinomio(polinomioDesordenado))
-    print("Polinomio Interpolador:")
-    print(polinomioDesordenado)
-    graficar_polinomio_interpolador(polinomioDesordenado, paresDesordenados)
+    graficar_polinomios_interpoladores(polinomio, pares_ordenados)
 
 
 if __name__ == "__main__":

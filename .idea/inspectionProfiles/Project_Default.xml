@@ -1,0 +1,41 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyArgumentEqualDefaultInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyAugmentAssignmentInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyMissingOrEmptyDocstringInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyMissingTypeHintsInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="14">
+            <item index="0" class="java.lang.String" itemvalue="pyyaml" />
+            <item index="1" class="java.lang.String" itemvalue="flask-restx" />
+            <item index="2" class="java.lang.String" itemvalue="impyla" />
+            <item index="3" class="java.lang.String" itemvalue="thrift" />
+            <item index="4" class="java.lang.String" itemvalue="google-cloud-bigquery" />
+            <item index="5" class="java.lang.String" itemvalue="cryptography" />
+            <item index="6" class="java.lang.String" itemvalue="stevedore" />
+            <item index="7" class="java.lang.String" itemvalue="exceptiongroup" />
+            <item index="8" class="java.lang.String" itemvalue="platformdirs" />
+            <item index="9" class="java.lang.String" itemvalue="identify" />
+            <item index="10" class="java.lang.String" itemvalue="googleapis-common-protos" />
+            <item index="11" class="java.lang.String" itemvalue="virtualenv" />
+            <item index="12" class="java.lang.String" itemvalue="marshmallow" />
+            <item index="13" class="java.lang.String" itemvalue="grpcio" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="_engine" />
+          <option value="_group_id" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="SqlDialectInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+  </profile>
+</component>

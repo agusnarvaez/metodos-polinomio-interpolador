@@ -7,12 +7,13 @@ from sympy import simplify, symbols, degree, degree_list
 from decimal import Decimal, ROUND_DOWN
 from tabulate import tabulate
 import copy
+from scipy.optimize import newton
+from numpy import poly1d
 
 # Ignorar advertencias de numpy
 warnings.simplefilter(action='ignore', category=FutureWarning)
 # Establecer opciones de alineación
 options = {"floatfmt": ".0f", "stralign": "center"}
-
 
 def generar_pares_aleatorios():
     """
@@ -33,7 +34,6 @@ def generar_pares_aleatorios():
 
     return pares
 
-
 def ordenar_pares(pares):
     """
     Ordena los pares de menor a mayor por la coordenada x y en caso de empate por la coordenada y.
@@ -45,7 +45,6 @@ def ordenar_pares(pares):
     paresOrdenados.sort(key=lambda x: (x[0], x[1]))
     return paresOrdenados
 
-
 def invertir_pares(pares):
     """
     Ordena los pares de mayor a menor por la coordenada x y en caso de empate por la coordenada y.
@@ -55,7 +54,6 @@ def invertir_pares(pares):
     paresInvertidos = copy.copy(pares)
     paresInvertidos.sort(key=lambda x: (-x[0], x[1]))
     return paresInvertidos
-
 
 def calcular_diferencias_divididas(x, y):
     """
@@ -74,7 +72,6 @@ def calcular_diferencias_divididas(x, y):
 
     return diferencias
 
-
 def calcular_coeficientes(x, y):
     """
     Calcula los coeficientes del polinomio interpolador.
@@ -88,6 +85,13 @@ def calcular_coeficientes(x, y):
         coeficientes.append(diferencias[i])
     return coeficientes
 
+def calcular_raiz_polinomio(puntos, x0):
+    x = [p[0] for p in puntos]
+    y = [p[1] for p in puntos]
+    coeficientes = calcular_coeficientes(x, y)
+    polinomio = poly1d(coeficientes)
+    raiz = newton(polinomio, x0)
+    return raiz
 
 def calcular_polinomio_interpolador(puntos):
     """
@@ -106,11 +110,9 @@ def calcular_polinomio_interpolador(puntos):
             polinomio += f" * (x - {x[j]})"
     return simplify(polinomio)
 
-
 def obtener_grado_polinomio(polinomio):
     grado = degree(polinomio)
     return grado
-
 
 def graficar_polinomios_interpoladores(polinomio, puntos):
     """
@@ -145,14 +147,12 @@ def graficar_polinomios_interpoladores(polinomio, puntos):
     plt.grid(True)
     plt.show()
 
-
 def formateo_impresion(polinomio, pares):
     print(tabulate(pares, headers=["x", "y"], tablefmt="fancy_grid"))  # Imprimir pares en forma de tabla
     print("Grado Polinomio:")
     print(obtener_grado_polinomio(polinomio))
     print("Polinomio Interpolador:")
     print(polinomio)
-
 
 def main():
     """
@@ -164,11 +164,17 @@ def main():
     print("    - Venturini, Tomás")
     print("    - Narvaez, Agustín")
     # * Genero números aleatorios
-    pares_desordenados = generar_pares_aleatorios()
-
+    #pares_desordenados = generar_pares_aleatorios()
+    pares_desordenados = [(2,3),(1,-1),(0,2),(-1,5),(-2,7),(-3,9)]
+    print(pares_desordenados)
     # * Ordeno los pares y los muestro, calculo el polinomio y lo muestro
     pares_ordenados = ordenar_pares(pares_desordenados)
     polinomio = calcular_polinomio_interpolador(pares_ordenados)
+
+    raiz_polinomio = calcular_raiz_polinomio(pares_ordenados, -3)
+    print("Raíz polinomio:")
+    print(raiz_polinomio)
+
     formateo_impresion(polinomio, pares_ordenados)
 
     # * Invierto los pares y los muestro, calculo el polinomio y lo muestro
@@ -181,7 +187,6 @@ def main():
     formateo_impresion(polinomio_desordenado, pares_desordenados)
 
     graficar_polinomios_interpoladores(polinomio, pares_ordenados)
-
 
 if __name__ == "__main__":
     main()
